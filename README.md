@@ -1,5 +1,5 @@
-# arin-roa-request
-A scripts to connect to ARIN's RESTful API to create ROAs
+# ARIN ROA Request
+Two scripts to connect to ARIN's OT&E and Production RESTful APIs to create ROAs
 
 **Note! The script ote-arin-roa-request.py is the same as the arin-roa-request.py script except it makes the API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.**
 
