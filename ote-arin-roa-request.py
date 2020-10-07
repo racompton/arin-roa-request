@@ -1,10 +1,10 @@
 #!/usr/bin/python3
 
-# Written by Rich Compton rich.compton@charter.com
+# Note this is only to generate TEST ROAs!  There is another script (arin-roa-request.py) that generates REAL ROAs
 # This is a script that reads in a CSV with each line as
 # Origin AS,IP prefix,CIDR mask,maxLength
 # Ex: 65000,192.0.2.0,24,24
-# For each line it will make an API call to ARIN to request a ROA be created
+# For each line it will make an API call to ARIN's OT&E to request a test ROA be created
 
 import sys
 import requests
