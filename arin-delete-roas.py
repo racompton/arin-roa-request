@@ -3,7 +3,7 @@
 '''
 This is a script that will do two functions.  
 -first it will list the roaHandle and IP Prefix for each ROA in an ORG-ID
--second it will delete the ROAs defined by the roaHandle in a txt file
+-second it will delete the ROAs defined by the roaHandle in a CSV file
 '''
 
 import sys
