@@ -39,6 +39,6 @@ The ROA deletion script can be run like this to delete a CSV list of existing RO
 Again, if you want to execute the two above commands on the production API, use the ```-p``` switch.
 
 
-**And remember, when you create ROAs for your prefixes you are protecting those prefixes against BGP origin hijacks.  When you perform ROV (https://tools.ietf.org/html/rfc6811) on your eBGP routers, you are helping to protect others from BGP origin hijacks.  It only takes one ASN in the AS path to perform ROV for protection against BGP origin hijacks. The more networks that implement these technologies, the safer we all are! **
+**And remember, when you create ROAs for your prefixes you are protecting those prefixes against BGP origin hijacks.  When you perform ROV (https://tools.ietf.org/html/rfc6811) on your eBGP routers, you are helping to protect others from BGP origin hijacks.  It only takes one ASN in the AS path to perform ROV for protection against BGP origin hijacks. The more networks that implement these technologies, the safer we all are!**
 
 Please check out https://docs.google.com/document/d/1fGsuDpLSn0ZN3-Pa-4aAciGH-Qc0K5AHZ1GyFRAHow4/edit?usp=sharing for more info on implementing RPKI in your network!
