@@ -1,7 +1,7 @@
 # ARIN ROA Request
-Two scripts to connect to ARIN's OT&E and Production RESTful APIs to create ROAs
+Two scripts to connect to ARIN's OT&E and Production RESTful APIs.  One script is to create ROAs and the other is to list/delete them.
 
-**Note! The script ote-arin-roa-request.py is the same as the arin-roa-request.py script except it makes the API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.**
+**Note! The scripts arin-roa-request.py and arin-delete-roas.py by default only make an API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.  If you want to make an API call to ARIN's production API, specify the -p/--production command line argument.**
 
 In order to execute the script you will need to generate an API key.  See this link to find out more info on generating an API key with ARIN: https://www.arin.net/reference/materials/security/api_keys/
 
@@ -22,8 +22,17 @@ Origin AS,IP prefix,CIDR mask,maxLength
 Ex: ```65000,192.0.2.0,24,24```
 **Note, the maxLength is required in this script!  It is recommended that the maxLength be equal to the CIDR mask.  If you set the maxLength too large (ex. /24 or /48) you open yourself up to a potential forged-origin subprefix hijack (see this IETF doc: https://tools.ietf.org/html/draft-ietf-sidrops-rpkimaxlen)**
 
-The test script can be run like this for OT&E:
-```./ote-arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k ote_roa_req_signing_key.private.pem -o <ORG-ID> --debug```
+The ROA creation script can be run like this for OT&E:
+```./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k ote_roa_req_signing_key.private.pem -o <ORG-ID> --debug```
 
-The production script can be run like this:
-```./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k org_pubkey.pem -o <ORG-ID>```
+The ROA creation script can be run like this for production:
+```./arin-roa-request.py -c ROAs.txt  -k org_pubkey.pem -o <ORG-ID> -p```
+
+The ROA deletion script can be run like this to output a CSV list of existing ROAs in OT&E:
+```./arin-delete-roas.py -l -o <ORG-ID> -a <ARIN API KEY>```
+
+The ROA deletion script can be run like this to delete a CSV list of existing ROAs (use output from list command above) in OT&E:
+```./delete-roas.py -f <CSV file of ROAs to delete> -o <ORG-ID> -a <ARIN API KEY>```
+
+Again, if you want to execute the two above commands on the production API, use the ```-p``` switch.
+
