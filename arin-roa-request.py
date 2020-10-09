@@ -12,7 +12,6 @@ import argparse
 import base64
 import csv
 import xml.dom.minidom
-import OpenSSL
 from datetime import datetime,timedelta
 from OpenSSL import crypto
 import requests
@@ -28,10 +27,20 @@ parser.add_argument('-c','--csv', help='Specify a CSV with each line in the form
 parser.add_argument('-a','--apikey', help='Specify the ARIN API key.',required=True)
 parser.add_argument('-k','--key', help='Specify the location of the ORG-ID PEM private key file used for signing ROAs.',required=True)
 parser.add_argument('-o','--orgid', help='Specify the ARIN ORG-ID associated with the prefixes.',required=True)
+parser.add_argument('-p','--production', action='store_true', help='Specify that you want to execute the API call in production and not OT&E.',required=False)
 parser.add_argument('--debug', action='store_true', help='Enable debug mode',required=False)
 
 # Parse all the arguments
 args = parser.parse_args()
+
+# Does the user want to execute this on the production API?
+if args.production:
+    print ('If you want to execute this on the Production API, please type \'production\'.  If you don\'t type this, then the API calls will be made to the OT&E API.')
+    prod = str(input()) 
+
+    if prod == 'production':
+        print('OK, just checking one more time that you really, really, REALLY want to execute this on the production API.  If so, type \'Yes\'.')
+        yes_really_prod = str(input()) 
 
 # Define a function to generate the roaData
 def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
@@ -48,8 +57,13 @@ def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
     name = f'AS{asn}-NET-{name}-{mask}'
     create = datetime.now()
     epoch_time = int(create.timestamp())
-    # Set expire time to 520 weeks from today's date (520 weeks)
-    expire = create + timedelta(weeks=520)
+    # Change to 10 years (520 weeks) for prod insead of 4 weeks for OT&E 
+    if 'yes_really_prod' in globals():
+        if yes_really_prod == 'Yes':
+            expire_weeks = 520
+    else:
+         expire_weeks = 4
+    expire = create + timedelta(weeks=expire_weeks)
     creation = f'{create.day}-{create.month}-{create.year}'
     expiration = f'{expire.month}-{expire.day}-{expire.year}'
     # Generate the roaData
@@ -72,7 +86,8 @@ def generate_signature(roaData: str) -> str:
     # encode the roaData in utf8
     roaData = roaData.encode('utf8')
     # Sign the roaData
-    sign = OpenSSL.crypto.sign(pkey, roaData, 'sha256')
+    #sign = OpenSSL.crypto.sign(pkey, roaData, 'sha256')
+    sign = crypto.sign(pkey, roaData, 'sha256')
     # Encode the signature in base64
     signature = base64.b64encode(sign)
     # Return the signature
@@ -85,6 +100,12 @@ def roa_request(signature: str, roaData: str) -> str:
     '''
     Builds the ARIN ROA object per API details
     '''
+    # Make API call to either prod or OT&E
+    if 'yes_really_prod' in globals():
+        if yes_really_prod == 'Yes':
+            host = 'reg.arin.net'
+    else:
+        host = 'reg.ote.arin.net'
     # Resource Classification is ARIN
     resource_class = 'AR'
     signature = signature.decode('utf-8')
@@ -96,14 +117,13 @@ def roa_request(signature: str, roaData: str) -> str:
     # Construct the headers
     headers = {'Content-Type': 'application/xml', 'Accept': 'application/xml'}
     # Construct the URL
-    # !!!! Change to REAL URL for Prod !!!!
-    url = f'https://reg.arin.net/rest/roa/{args.orgid};resourceClass={resource_class}?apikey={args.apikey}'
+    url = f'https://{host}/rest/roa/{args.orgid};resourceClass={resource_class}?apikey={args.apikey}'
     if args.debug:
         print(f'The URL to POST to is:\n{url}')
         print(f'The headers to POST are:\n{headers}')
         print(f'The payload to post is:\n{payload}')
 
-    # Attempt to make post to API or error out
+    # POST to API or error out
     try:
         # Make API call and get response
         response = requests.post(url, data=payload, headers=headers)
