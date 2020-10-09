@@ -3,6 +3,9 @@ Two scripts to connect to ARIN's OT&E and Production RESTful APIs.  One script i
 
 **Note! The scripts arin-roa-request.py and arin-delete-roas.py by default only make an API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.  If you want to make an API call to ARIN's production API, specify the -p/--production command line argument.**
 
+The scripts need the BeautifulSoup4, lxml (used by BeautifulSoup4 for xml decoding), and requests python modules.  They can be installed by executing:
+```pip3 install beautifulsoup4 lxml requests```
+
 In order to execute the scripts you will need to generate an API key.  See this link to find out more info on generating an API key with ARIN: https://www.arin.net/reference/materials/security/api_keys/
 
 To create ROAs you will also need a private key that will be used to sign your ROAs.  The OT&E has a special private key that is used for signing all ROAs in that test environment.  The test private key can be downloaded here: https://www.arin.net/reference/tools/testing/ote_roa_req_signing_key.private.pem 
