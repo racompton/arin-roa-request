@@ -64,7 +64,7 @@ def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
     else:
          expire_weeks = 4
     expire = create + timedelta(weeks=expire_weeks)
-    creation = f'{create.day}-{create.month}-{create.year}'
+    creation = f'{create.month}-{create.day}-{create.year}'
     expiration = f'{expire.month}-{expire.day}-{expire.year}'
     # Generate the roaData
     roaData = f'1|{epoch_time}|{name}|{asn}|{creation}|{expiration}|{prefix}|{mask}|{max_length}|'
