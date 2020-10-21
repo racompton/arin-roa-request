@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 '''
+Written by Rich Compton rich.compton@charter.com
 This is a script that reads in a CSV with each line as
 Origin AS,IP prefix,CIDR mask,maxLength
 Ex: 65000,192.0.2.0,24,24
@@ -136,10 +137,19 @@ def roa_request(signature: str, roaData: str) -> str:
         if args.debug:
             print('Uh oh we got a requests error!')
         raise SystemExit(e)
+    dom = xml.dom.minidom.parseString(response.content.decode('utf-8'))
+    response_content = dom.toprettyxml()
+   
+    # Check to see if the response was 200.  If so, everything is ok.  Else print error response
+    if str(response) == "<Response [200]>": 
+        print(f'ROA successfully created for ROA: {roaData}')
+    else:
+        print(f'ERROR! ROA creation failed for ROA: {roaData}!')
+    
+    #Print debug
     if args.debug:
-        dom = xml.dom.minidom.parseString(response.content.decode('utf-8'))
-        pretty_xml_as_string = dom.toprettyxml()
-        print(f'Response is:\n{pretty_xml_as_string}')
+        print(f'Response is:\n{response_content}')
+
     return response
 
 # Open the csv file and read each line
@@ -154,4 +164,3 @@ with open(args.csv) as csvfile:
         roaData_payload = generate_roaData(asn, prefix, mask, maxLength)
         signature_payload = generate_signature(roaData_payload)
         response_payload = roa_request(signature_payload, roaData_payload)
-        print(f'For prefix:{prefix} the response from the API was:{response_payload}')
