@@ -1,9 +1,10 @@
 #!/usr/bin/python3
 
 '''
+Written by Rich Compton rich.compton@charter.com
 This is a script that will do two functions.  
 -first it will list the roaHandle and IP Prefix for each ROA in an ORG-ID
--second it will delete the ROAs defined by the roaHandle in a CSV file
+-second it will delete the ROAs defined by the roaHandle in a txt file
 '''
 
 import sys
@@ -20,7 +21,7 @@ if sys.version_info<(3,6,5):
 
 # Get command line arguments and parse them
 parser = argparse.ArgumentParser(description='This is a script that will do two functions: \nFirst it will list the roaHandle and IP Prefix for each ROA in an ORG-ID. \n Second it will delete the ROAs defined by the roaHandle in a txt file.')
-parser.add_argument('-l','--list', action='store_true', help='List the roaHandle and IP Prefix for each ROA in an ORG-ID.',required=False)
+parser.add_argument('-l','--list', action='store_true', help='List the roaHandle, ASN, IP prefix, and mask for each ROA in an ORG-ID.',required=False)
 parser.add_argument('-f','--file', help='Specify the text file that has a list of roaHandles to be deleted.',required=False)
 parser.add_argument('-a','--apikey', help='Specify the ARIN API key.',required=True)
 parser.add_argument('-o','--orgid', help='Specify the ARIN ORG-ID associated with the prefixes.',required=False)
@@ -106,12 +107,13 @@ def delete_roas(file, apikey):
                     print('Uh oh we got a requests error!')
                 raise SystemExit(e)
             dom = xml.dom.minidom.parseString(response.content.decode('utf-8'))
-            pretty_xml_as_string = dom.toprettyxml()
-            print(f'The response from the server for the deletion of {roaHandle} is:{response}')
+            response_content = dom.toprettyxml()
+            if str(response) == "<Response [200]>": 
+                print(f'Successfully deleted ROA with roaHandle: {roaHandle}')
+            else:
+                print(f'ERROR! ROA deletion failed for ROA with roaHandle:{roaHandle}!')
             if args.debug:
-                dom = xml.dom.minidom.parseString(response.content.decode('utf-8'))
-                pretty_xml_as_string = dom.toprettyxml()     
-                print(f'The response from the server for the deletion of {roaHandle} is:\n{pretty_xml_as_string}')
+                print(f'The response from the server for the deletion of {roaHandle} is:\n{response_content}')
 
 
 if args.list:
