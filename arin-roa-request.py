@@ -26,6 +26,7 @@ if sys.version_info<(3,6,5):
 parser = argparse.ArgumentParser(description='This is a script that reads in a CSV and makes API calls to ARIN to request ROAs.')
 parser.add_argument('-c','--csv', help='Specify a CSV with each line in the format: Origin AS,IP prefix,CIDR mask,maxLength.  Ex: 65000,192.0.2.0,24,24',required=True)
 parser.add_argument('-a','--apikey', help='Specify the ARIN API key.',required=True)
+parser.add_argument('-e','--expiration', help='Specify the number of weeks out to set the certificate expiration.  If unset, it will default to 312 weeks (6 years) for production or 4 weeks for OT&E.',required=False)
 parser.add_argument('-k','--key', help='Specify the location of the ORG-ID PEM private key file used for signing ROAs.',required=True)
 parser.add_argument('-o','--orgid', help='Specify the ARIN ORG-ID associated with the prefixes.',required=True)
 parser.add_argument('-p','--production', action='store_true', help='Specify that you want to execute the API call in production and not OT&E.',required=False)
@@ -58,10 +59,13 @@ def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
     name = f'AS{asn}-NET-{name}-{mask}'
     create = datetime.now()
     epoch_time = int(create.timestamp())
-    # Change to 10 years (520 weeks) for prod insead of 4 weeks for OT&E 
+    # Change to 6 years (312 weeks) or whatever specified for prod by default or 4 weeks for OT&E 
     if 'yes_really_prod' in globals():
         if yes_really_prod == 'Yes':
-            expire_weeks = 520
+            if args.expiration:
+                expire_weeks = args.expiration
+            else:
+                expire_weeks = 312
     else:
          expire_weeks = 4
     expire = create + timedelta(weeks=expire_weeks)
