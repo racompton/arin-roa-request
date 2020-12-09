@@ -68,6 +68,9 @@ def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
                 expire_weeks = 312
     else:
          if args.expiration:
+             if int(args.expiration) > 4:
+                 sys.stderr.write('For OT&E, the expiration value can\'t be greater than 4 weeks. \n')
+                 sys.exit(1)
              expire_weeks = int(args.expiration)
          else:
              expire_weeks = 4
