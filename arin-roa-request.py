@@ -63,11 +63,14 @@ def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
     if 'yes_really_prod' in globals():
         if yes_really_prod == 'Yes':
             if args.expiration:
-                expire_weeks = args.expiration
+                expire_weeks = int(args.expiration)
             else:
                 expire_weeks = 312
     else:
-         expire_weeks = 4
+         if args.expiration:
+             expire_weeks = int(args.expiration)
+         else:
+             expire_weeks = 4
     expire = create + timedelta(weeks=expire_weeks)
     creation = f'{create.month}-{create.day}-{create.year}'
     expiration = f'{expire.month}-{expire.day}-{expire.year}'
