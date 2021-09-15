@@ -14,7 +14,7 @@ More info is here: https://www.arin.net/reference/tools/testing/#roa-request-gen
 For production, you will need to generate your own public/private key pair to create ROAs.  This procedure is documented at https://www.arin.net/resources/manage/rpki/roa_request/
 Here’s the procedure to quickly create a ROA in ARIN using your browser:
 Create your public/private key pair using OpenSSL:
-`openssl genrsa -out org keypair.pem 2048`
+`openssl genrsa -out orgkeypair.pem 2048`
 This command generates a ROA Request Generation Key Pair and saves it as a file named orgkeypair.pem.
 `openssl rsa -in orgkeypair.pem -pubout -outform PEM -out org_pubkey.pem`
 This command extracts the public key from the ROA Request Generation key pair and writes it to a file named `org_pubkey.pem`.
@@ -29,7 +29,7 @@ The ROA creation script can be run like this for OT&E:
 `./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k ote_roa_req_signing_key.private.pem -o <ORG-ID> --debug`
 
 The ROA creation script can be run like this for production (note -p command line argument specified for production):
-`./arin-roa-request.py -c ROAs.txt  -k org_pubkey.pem -o <ORG-ID> -p`
+`./arin-roa-request.py -c ROAs.txt  -k orgkeypair.pem -o <ORG-ID> -p`
 
 The ROA deletion script can be run like this to output a CSV list of existing ROAs in OT&E and put the CSV into a file:
 `./arin-delete-roas.py -l -o <ORG-ID> -a <ARIN API KEY> > ROAs-to-be-deleted.csv`
