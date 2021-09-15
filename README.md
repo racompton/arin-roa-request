@@ -12,13 +12,20 @@ To create ROAs you will also need a private key that will be used to sign your R
 More info is here: https://www.arin.net/reference/tools/testing/#roa-request-generation-key-pairs
 
 For production, you will need to generate your own public/private key pair to create ROAs.  This procedure is documented at https://www.arin.net/resources/manage/rpki/roa_request/
-Here’s the procedure to quickly create a ROA in ARIN using your browser:
-Create your public/private key pair using OpenSSL:
-`openssl genrsa -out orgkeypair.pem 2048`
-This command generates a ROA Request Generation Key Pair and saves it as a file named orgkeypair.pem.
-`openssl rsa -in orgkeypair.pem -pubout -outform PEM -out org_pubkey.pem`
-This command extracts the public key from the ROA Request Generation key pair and writes it to a file named `org_pubkey.pem`.
-Keep the `orgkeypair.pem` file private, perhaps in an HSM.  If the security of the private key is compromised, you should delete all of the ROAs created with that key and generate a new key pair and new ROAs.
+
+Here’s the procedure to generate a public/private keypair:
+
+This command generates a ROA Request Generation Key Pair and saves it as a file named org_privkey.pem:
+
+`openssl genrsa -out org_privkey.pem 2048`
+
+This command extracts the public key from the org_privkey.pem and writes it to a file named `org_pubkey.pem`:
+
+`openssl rsa -in org_privkey.pem -pubout -outform PEM -out org_pubkey.pem`
+
+For ARIN, the contents of the `org_pubkey.pem` needs to be uploaded to "Public Key" section of the Managing RPKI page of the ORG-ID.  See https://www.arin.net/resources/manage/rpki/hosted/#cert-request
+
+Keep the `org_privkey.pem` file private, perhaps in an HSM.  If the security of the private key is compromised, you should delete all of the ROAs created with that key and generate a new key pair and new ROAs.
 
 The ROA creation script needs to have a CSV file specified which defines the values for each ROA that is created.  The format of the CSV is:
 Origin AS,IP prefix,CIDR mask,maxLength
