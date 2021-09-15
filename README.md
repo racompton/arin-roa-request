@@ -30,6 +30,7 @@ Keep the `org_privkey.pem` file private, perhaps in an HSM.  If the security of 
 The ROA creation script needs to have a CSV file specified which defines the values for each ROA that is created.  The format of the CSV is:
 Origin AS,IP prefix,CIDR mask,maxLength
 Ex: `65000,192.0.2.0,24,24`
+
 **Note, the maxLength is required in this script!  It is recommended that the maxLength be equal to the CIDR mask.  If you set the maxLength too large (ex. /24 or /48) you open yourself up to a potential forged-origin subprefix hijack (see this IETF doc: https://tools.ietf.org/html/draft-ietf-sidrops-rpkimaxlen)**
 
 The ROA creation script can be run like this for OT&E:
