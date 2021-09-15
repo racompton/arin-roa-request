@@ -43,7 +43,7 @@ if args.production:
     if prod == 'production':
         print('OK, just checking one more time that you really, really, REALLY want to execute this on the production API.  If so, type \'Yes\'.')
         yes_really_prod = str(input()) 
-        if yes_really_prod != 'production':
+        if yes_really_prod != 'Yes':
             print("You didn't type \'Yes\' so I'm quitting.  FYI, this is case sensitive.  You must type \'Yes\' to execute in production!")
             quit()
 
