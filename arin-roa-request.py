@@ -43,6 +43,9 @@ if args.production:
     if prod == 'production':
         print('OK, just checking one more time that you really, really, REALLY want to execute this on the production API.  If so, type \'Yes\'.')
         yes_really_prod = str(input()) 
+        if yes_really_prod != 'production':
+            print("You didn't type \'Yes\' so I'm quitting.  FYI, this is case sensitive.  You must type \'Yes\' to execute in production!")
+            quit()
 
 # Define a function to generate the roaData
 def generate_roaData(asn: str, prefix: str, mask: str, max_length: str) -> str:
