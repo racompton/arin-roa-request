@@ -37,10 +37,10 @@ The ROA creation script can be run like this for OT&E:
 `./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k ote_roa_req_signing_key.private.pem -o <ORG-ID> --debug`
 
 The ROA creation script can be run like this for production (note -p command line argument specified for production):
-`./arin-roa-request.py -c ROAs.txt  -k orgkeypair.pem -o <ORG-ID> -p`
+`./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k orgkeypair.pem -o <ORG-ID> -p`
 
 The ROA deletion script can be run like this to output a CSV list of existing ROAs in OT&E and put the CSV into a file:
-`./arin-delete-roas.py -l -o <ORG-ID> -a <ARIN API KEY> > ROAs-to-be-deleted.csv`
+`./arin-delete-roas.py -l  -a <ARIN API KEY> -o <ORG-ID> > ROAs-to-be-deleted.csv`
 
 You can now edit the ```ROAs-to-be-deleted.csv``` file and remove the ROAs that you don't want to be deleted.
 
