@@ -1,7 +1,7 @@
 # ARIN ROA Request and List/Deletion Scripts
-Three scripts to connect to ARIN's OT&E and Production RESTful APIs.  One script is to create ROAs in the old API which needed the ROAs to be signed by the private key, one script which uses the new API (as of 2/23) which generates auto-renewing ROAs and one is to list/delete them.
+Three scripts to connect to ARIN's OT&E and Production RESTful APIs.  One script is to create ROAs in the old API which needed the ROAs to be signed by the private key (`arin-roa-request.py`) , one script which uses the new API (as of 2/23) which generates auto-renewing ROAs (`createAutoRenew_ARIN_RPKI_ROAs.py`) and one is to list/delete them (`arin-delete-roas.py`).
 
-**Note! The scripts arin-roa-request.py, createAutoRenew_ARIN_RPKI_ROAs.py, and arin-delete-roas.py by default only make an API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.  If you want to make an API call to ARIN's production API, specify the -p/--production command line argument.**
+**Note! The scripts `arin-roa-request.py`, `createAutoRenew_ARIN_RPKI_ROAs.py`, and `arin-delete-roas.py` by default only make an API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.  If you want to make an API call to ARIN's production API, specify the -p/--production command line argument.**
 
 The scripts need the BeautifulSoup4, lxml (used by BeautifulSoup4 for xml decoding), and requests python modules.  They can be installed by executing:
 `pip3 install beautifulsoup4 lxml requests`
