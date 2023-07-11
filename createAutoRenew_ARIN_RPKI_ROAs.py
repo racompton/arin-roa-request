@@ -9,11 +9,9 @@ import argparse
 import base64
 import csv
 import time
-#import xml.dom.minidom
 from datetime import datetime,timedelta
 from bs4 import BeautifulSoup
 import xml.dom.minidom
-#from OpenSSL import crypto
 import requests
 from bs4 import BeautifulSoup
 
