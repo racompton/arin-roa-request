@@ -2,10 +2,45 @@
 
 Three scripts to connect to ARIN's OT&E and Production RESTful APIs.  One script is to create ROAs in the old API which needed the ROAs to be signed by the private key (`arin-roa-request.py`) , one script which uses the new API (as of 2/23) which generates auto-renewing ROAs (`create_arin_rpki_roas.py`) and one is to list/delete them (`arin-delete-roas.py`).
 
+## Table of Contents
+
+- [ARIN ROA Request and List/Deletion Scripts](#arin-roa-request-and-listdeletion-scripts)
+  - [Table of Contents](#table-of-contents)
+  - [New RPKI ROA creation](#new-rpki-roa-creation)
+  - [Legacy RPKI ROA creation](#legacy-rpki-roa-creation)
+  - [Importance of RPKI and ROAs](#importance-of-rpki-and-roas)
+
 **Note! The scripts `arin-roa-request.py`, `create_arin_rpki_roas.py`, and `arin-delete-roas.py` by default only make an API call to ARIN's OT&E (Operational Test & Evaluation) Environment.  Any change made in the OT&E is just a test and does not impact the "real" environment.  If you want to make an API call to ARIN's production API, specify the -p/--production command line argument.**
 
-The scripts need the BeautifulSoup4, lxml (used by BeautifulSoup4 for xml decoding), and requests python modules.  They can be installed by executing:
-`pip3 install beautifulsoup4 lxml requests`
+To install necessary python modules please run:
+
+`pip install requirements.txt`
+
+**Note, the maxLength is required in this script!  It is recommended that the maxLength be equal to the CIDR mask.  If you set the maxLength too large (ex. /24 or /48) you open yourself up to a potential forged-origin subprefix hijack (see this IETF doc: <https://tools.ietf.org/html/draft-ietf-sidrops-rpkimaxlen>)**
+
+## New RPKI ROA creation
+
+"To receive the benefit of auto-renewing ROAs, please use the new endpoint to Create and Delete ROAs. The new endpoint is both simpler and more powerful." - ARIN
+
+[LINK](https://www.arin.net/resources/manage/regrws/methods/#create-and-delete-roas) TO ARIN API Documents.
+
+The new ROA creation script `create_arin_rpki_roas.py` needs to have a CSV file specified which defines the values for each ROA that is created.  The format of the CSV is:
+Origin AS,IP prefix,CIDR mask,maxLength
+Ex:
+
+```csv
+65000,192.0.2.0,24,24
+```
+
+The new ROA create script can be run like this for OT&E:
+
+`./create_arin_rpki_roas.py -c example-roa.csv -o <ORG-ID>`
+
+The new ROA create script can be run like this for production (note -p command line argument specified for production):
+
+`./create_arin_rpki_roas.py -c example-roa.csv -o <ORG-ID> -p`
+
+## Legacy RPKI ROA creation
 
 In order to execute the scripts you will need to generate an API key.  The `create_arin_rpki_roas.py` script needs an API key generated after 2/23.  See this link to find out more info on generating an API key with ARIN: <https://www.arin.net/reference/materials/security/api_keys/>
 
@@ -33,33 +68,25 @@ The old ROA creation script needs to have a CSV file specified which defines the
 Origin AS,IP prefix,CIDR mask,maxLength
 Ex: `65000,192.0.2.0,24,24`
 
-The new ROA creation script `create_arin_rpki_roas.py` needs to have a CSV file specified which defines the values for each ROA that is created.  The format of the CSV is:
-Origin AS,IP prefix,CIDR mask,maxLength
-Ex: `65000,192.0.2.0,24,24`
-
-**Note, the maxLength is required in this script!  It is recommended that the maxLength be equal to the CIDR mask.  If you set the maxLength too large (ex. /24 or /48) you open yourself up to a potential forged-origin subprefix hijack (see this IETF doc: <https://tools.ietf.org/html/draft-ietf-sidrops-rpkimaxlen>)**
-
 The old ROA creation script can be run like this for OT&E:
+
 `./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k ote_roa_req_signing_key.private.pem -o <ORG-ID> --debug`
 
-The new ROA create script can be run like this for OT&E:
-`./create_arin_rpki_roas.py -c example-roa.csv -o <ORG-ID>`
-
 The old ROA creation script can be run like this for production (note -p command line argument specified for production):
+
 `./arin-roa-request.py -c ROAs.txt -a <ARIN API KEY> -k orgkeypair.pem -o <ORG-ID> --debug -p`
 
-The new ROA create script can be run like this for production (note -p command line argument specified for production):
-`./create_arin_rpki_roas.py -c example-roa.csv -o <ORG-ID> -p`
-
 The ROA deletion script can be run like this to output a CSV list of existing ROAs in OT&E and put the CSV into a file:
+
 `./arin-delete-roas.py -l  -a <ARIN API KEY> -o <ORG-ID> > ROAs-to-be-deleted.csv`
 
-You can now edit the ```ROAs-to-be-deleted.csv``` file and remove the ROAs that you don't want to be deleted.
+You can now edit the `ROAs-to-be-deleted.csv` file and remove the ROAs that you don't want to be deleted.
 
 The ROA deletion script can be run like this to delete a CSV list of existing ROAs (use output from list command above) in OT&E:
+
 `./delete-roas.py -f <CSV file of ROAs to delete> -o <ORG-ID> -a <ARIN API KEY>`
 
-Again, if you want to execute the above commands on the production API, use the `-p` switch.
+## Importance of RPKI and ROAs
 
 **And remember, when you create ROAs for your prefixes you are protecting those prefixes against BGP origin hijacks.  When you perform ROV (<https://tools.ietf.org/html/rfc6811>) on your eBGP routers, you are helping to protect others from BGP origin hijacks.  It only takes one ASN in the AS path to perform ROV for protection against BGP origin hijacks. The more networks that implement these technologies, the safer we all are!**
 
