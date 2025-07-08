@@ -69,6 +69,7 @@ def generate_roaData(asn: str, asn_name: str, prefix: str, mask: str, maxLengh: 
         name = 'AS' + asn + '-NET-' + prefix.replace('::', '-').replace(':','-').replace('.','-') + '-' + mask + '-' + maxLengh + '-' + nowDate
     roaSpec = f'''
         <roaSpec> 
+            <autoLink>true</autoLink>
             <asNumber>{asn}</asNumber> 
             <name>{name}</name> 
                 <resources> 
